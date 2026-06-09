@@ -11,6 +11,7 @@ from typing import Any, TypeVar
 
 from .models import AnalysedSignal
 from .report import render_markdown
+from .scripts import GeneratedScript
 
 NOTION_VERSION = "2025-09-03"
 
@@ -18,6 +19,7 @@ NOTION_VERSION = "2025-09-03"
 DEFAULT_DAILY_SIGNAL_DB = "4c19d2da-5bfb-4888-ab96-d43f6016d451"
 DEFAULT_PATTERN_BANK_DB = "b879df0a-4d24-46c3-82b8-27ac5444e882"
 DEFAULT_DAILY_SUMMARY_DB = "9242d78a-4cca-410a-aa3a-c43db5a41dae"
+DEFAULT_GENERATED_SCRIPTS_DB = "e8841671-8865-4748-9a9c-73a8024b9c92"
 
 
 @dataclass(frozen=True)
@@ -25,6 +27,7 @@ class NotionSyncResult:
     daily_signal_pages: list[str]
     pattern_pages: list[str]
     summary_page: str | None
+    script_pages: list[str] | None = None
 
 
 def _token() -> str:
@@ -208,6 +211,47 @@ def sync_summary(items: list[AnalysedSignal], run_id: str, database_id: str) -> 
         else:
             children.append(paragraph(section))
     return create_page(database_id, props, children)["url"]
+
+
+def sync_generated_script(script: GeneratedScript, run_id: str, database_id: str, priority: str = "Medium") -> str:
+    props = {
+        "Name": title(script.title),
+        "Status": select("Review"),
+        "Date": date_prop(),
+        "Lane": select(script.lane),
+        "Source URL": {"url": script.source_url},
+        "Hook": rich(script.hook),
+        "On-screen Text": rich(script.on_screen_text),
+        "Caption": rich(script.caption),
+        "Run ID": rich(run_id),
+        "Priority": select(priority),
+    }
+    children = [
+        heading("On-screen text", 2),
+        paragraph(script.on_screen_text),
+        heading("Script", 2),
+        paragraph(script.script),
+        heading("Caption", 2),
+        paragraph(script.caption),
+        heading("Source pattern", 2),
+        paragraph(f"Inspired by: {script.inspired_by}"),
+        paragraph(f"Source: {script.source_url}"),
+        heading("Anti-content-bro check", 2),
+        *[bullet(item) for item in script.anti_content_bro_check],
+    ]
+    return create_page(database_id, props, children)["url"]
+
+
+def sync_generated_scripts(
+    scripts: list[GeneratedScript],
+    run_id: str,
+    database_id: str = DEFAULT_GENERATED_SCRIPTS_DB,
+) -> list[str]:
+    pages: list[str] = []
+    for idx, script in enumerate(scripts):
+        priority = "High" if idx == 0 else "Medium"
+        pages.append(sync_generated_script(script, run_id, database_id, priority=priority))
+    return pages
 
 
 def sync_run_to_notion(

@@ -12,7 +12,7 @@ from .analyse import analyse_signal
 from .comments import load_comments_file
 from .discover import discover_with_ytdlp, instagram_reels_url
 from .models import AnalysedSignal, WatchItem
-from .notion_direct import load_run, sync_run_to_notion
+from .notion_direct import load_run, sync_generated_scripts, sync_run_to_notion
 from .notion_export import export_notion_csv, write_notion_payload
 from .report import write_outputs
 from .schedule import cron_hint, write_runner
@@ -109,6 +109,7 @@ def scan(
     comments_file: Annotated[Path | None, typer.Option(help="Optional JSON/text comments export for audience-language extraction")] = None,
     notion_export: Annotated[bool, typer.Option(help="Write Notion-ready CSV exports after scanning")] = False,
     notion_sync: Annotated[bool, typer.Option(help="Directly sync this run to Don's Notion Daily Content Signals databases")] = False,
+    script_count: Annotated[int, typer.Option(help="Number of review scripts to auto-generate after analysis; use 0 to disable")] = 3,
 ) -> None:
     """Scan watchlist URLs, analyse signals, and write a report."""
     ensure_dirs()
@@ -142,11 +143,19 @@ def scan(
         payload = write_notion_payload(analysed, run_id)
         console.print(f"[green]Notion CSVs:[/green] {signal_csv}, {pattern_csv}, {summary_csv}")
         console.print(f"[green]Notion JSON payload:[/green] {payload}")
+    generated_scripts = []
+    if script_count > 0:
+        generated_scripts = generate_scripts_from_items(analysed, top=script_count)
+        scripts_md, scripts_json = write_generated_scripts(generated_scripts, run_id)
+        console.print(f"[green]Generated {len(generated_scripts)} review scripts:[/green] {scripts_md}")
     if notion_sync:
         result = sync_run_to_notion(analysed, run_id)
         console.print(f"[green]Synced {len(result.daily_signal_pages)} signals to Notion.[/green]")
         if result.summary_page:
             console.print(f"[green]Summary page:[/green] {result.summary_page}")
+        if generated_scripts:
+            script_pages = sync_generated_scripts(generated_scripts, run_id)
+            console.print(f"[green]Synced {len(script_pages)} generated scripts to Notion for review.[/green]")
 
 
 @app.command("export-notion")
@@ -177,6 +186,7 @@ def sync_notion(run_json: Annotated[Path, typer.Argument(help="Path to a data/ru
 def generate_scripts_cmd(
     run_json: Annotated[Path, typer.Argument(help="Path to a data/runs/*.json file")],
     top: Annotated[int, typer.Option(help="Number of scripts to generate")] = 3,
+    notion_sync: Annotated[bool, typer.Option(help="Also sync generated scripts to Notion Generated Scripts for review")] = False,
 ) -> None:
     """Generate ready-to-film Don-style scripts from a scan run."""
     items = load_run(run_json)
@@ -184,6 +194,9 @@ def generate_scripts_cmd(
     md_path, json_path = write_generated_scripts(scripts, run_json.stem)
     console.print(f"[green]Generated {len(scripts)} scripts:[/green] {md_path}")
     console.print(f"[green]JSON:[/green] {json_path}")
+    if notion_sync:
+        pages = sync_generated_scripts(scripts, run_json.stem)
+        console.print(f"[green]Synced {len(pages)} generated scripts to Notion for review.[/green]")
 
 
 @app.command("schedule-helper")

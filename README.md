@@ -36,17 +36,20 @@ uv run cse scan --limit 5 --notion-export
 uv run cse scan --limit 5 --notion-sync
 ```
 
+When `--notion-sync` is used, scan now automatically generates review scripts and puts them into the Notion `Generated Scripts` database. Default is 3 scripts; use `--script-count 0` to disable or `--script-count 5` for more.
+
 Direct sync uses Don's existing `Daily Content Signals` Notion databases under `A New Reality`:
 
 - Daily Signal Log
 - Pattern Bank
 - Daily Research Summaries
+- Generated Scripts
 
 You can also sync an existing run:
 
 ```bash
 uv run cse sync-notion data/runs/<run-id>.json
-uv run cse generate-scripts data/runs/<run-id>.json --top 3
+uv run cse generate-scripts data/runs/<run-id>.json --top 3 --notion-sync
 ```
 
 Optional audience-language input when comments are exported manually:
