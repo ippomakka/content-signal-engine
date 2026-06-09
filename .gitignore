@@ -1,0 +1,7 @@
+data/runs/
+data/reports/
+data/media/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
