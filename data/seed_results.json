@@ -1,0 +1,86 @@
+[
+  {
+    "creator": "Mark Manson",
+    "url": "https://www.youtube.com/@IAmMarkManson/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "HealthyGamerGG",
+    "url": "https://www.youtube.com/@HealthyGamerGG/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "The School of Life",
+    "url": "https://www.youtube.com/@theschooloflifetv/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Ryan Holiday",
+    "url": "https://www.youtube.com/@DailyStoic/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Ali Abdaal",
+    "url": "https://www.youtube.com/@aliabdaal/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Chris Williamson / Modern Wisdom",
+    "url": "https://www.youtube.com/@ChrisWillx/shorts",
+    "ok": false,
+    "added": null,
+    "returncode": 1
+  },
+  {
+    "creator": "Better Ideas",
+    "url": "https://www.youtube.com/@BetterIdeas/shorts",
+    "ok": true,
+    "added": "Added 2 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Cal Newport",
+    "url": "https://www.youtube.com/@CalNewportMedia/shorts",
+    "ok": false,
+    "added": null,
+    "returncode": 1
+  },
+  {
+    "creator": "Pursuit of Wonder",
+    "url": "https://www.youtube.com/@PursuitofWonder/shorts",
+    "ok": false,
+    "added": null,
+    "returncode": 1
+  },
+  {
+    "creator": "Einzelg\u00e4nger",
+    "url": "https://www.youtube.com/@Einzelganger/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Sisyphus 55",
+    "url": "https://www.youtube.com/@Sisyphus55/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  },
+  {
+    "creator": "Big Think",
+    "url": "https://www.youtube.com/@bigthink/shorts",
+    "ok": true,
+    "added": "Added 3 new posts to watchlist.",
+    "returncode": 0
+  }
+]

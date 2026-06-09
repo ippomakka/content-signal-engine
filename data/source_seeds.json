@@ -1,0 +1,86 @@
+[
+  {
+    "creator": "Mark Manson",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@IAmMarkManson/shorts",
+    "lane": "purpose / meaning / uncomfortable self-honesty",
+    "why": "Strong personal-development ideas without pure hustle energy; useful for existential hooks and anti-default-life framing."
+  },
+  {
+    "creator": "HealthyGamerGG",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@HealthyGamerGG/shorts",
+    "lane": "attention / mental health / under-30 stuckness",
+    "why": "Great source for audience pain language around attention, avoidance, identity, loneliness, gaming/scrolling, and feeling behind."
+  },
+  {
+    "creator": "The School of Life",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@theschooloflifetv/shorts",
+    "lane": "meaning / emotional intelligence / modern life",
+    "why": "Philosophical and emotionally literate ideas that can be translated into Don's warmer, less polished voice."
+  },
+  {
+    "creator": "Ryan Holiday",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@DailyStoic/shorts",
+    "lane": "stoicism / agency / self-mastery",
+    "why": "Good for simple discipline/agency mechanics, with a need to soften the stoic-guru energy for Don."
+  },
+  {
+    "creator": "Ali Abdaal",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@aliabdaal/shorts",
+    "lane": "productivity / intentional life design",
+    "why": "Useful mainstream productivity reference point; system should extract mechanics while filtering content-bro optimisation vibes."
+  },
+  {
+    "creator": "Chris Williamson / Modern Wisdom",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@ChrisWillx/shorts",
+    "lane": "modern culture / meaning / masculinity-adjacent self-development",
+    "why": "Good signal source for under-30 existential, dating, discipline, and modern-life discomfort topics."
+  },
+  {
+    "creator": "Better Ideas",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@BetterIdeas/shorts",
+    "lane": "self-improvement / attention / behaviour change",
+    "why": "Casual tone and self-aware productivity adjacent ideas; good for mechanics that don't feel too corporate."
+  },
+  {
+    "creator": "Cal Newport",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@CalNewportMedia/shorts",
+    "lane": "digital minimalism / deep work / attention",
+    "why": "Direct fit for attention, focus, phone addiction, and reclaiming life from digital noise."
+  },
+  {
+    "creator": "Pursuit of Wonder",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@PursuitofWonder/shorts",
+    "lane": "existential philosophy / wonder / meaning",
+    "why": "Strong philosophical packaging; useful for visual/idea patterns that can be made more personal by Don."
+  },
+  {
+    "creator": "Einzelgänger",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@Einzelganger/shorts",
+    "lane": "philosophy / solitude / non-default living",
+    "why": "Good source for philosophy and anti-mainstream ideas, especially solitude and inner freedom."
+  },
+  {
+    "creator": "Sisyphus 55",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@Sisyphus55/shorts",
+    "lane": "existentialism / philosophy / meaning crisis",
+    "why": "Useful for darker existential hooks and absurdism/meaning mechanics."
+  },
+  {
+    "creator": "Big Think",
+    "platform": "youtube",
+    "url": "https://www.youtube.com/@bigthink/shorts",
+    "lane": "ideas / psychology / culture",
+    "why": "Broad public-intellectual signal source; good for seeing which big ideas survive short-form packaging."
+  }
+]
