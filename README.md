@@ -46,6 +46,7 @@ You can also sync an existing run:
 
 ```bash
 uv run cse sync-notion data/runs/<run-id>.json
+uv run cse generate-scripts data/runs/<run-id>.json --top 3
 ```
 
 Optional audience-language input when comments are exported manually:

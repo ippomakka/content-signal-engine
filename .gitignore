@@ -2,6 +2,7 @@ data/runs/
 data/reports/
 data/media/
 data/notion_exports/
+data/generated_scripts/
 tmp-comments.txt
 .venv/
 __pycache__/

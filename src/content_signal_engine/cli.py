@@ -17,6 +17,7 @@ from .notion_export import export_notion_csv, write_notion_payload
 from .report import write_outputs
 from .schedule import cron_hint, write_runner
 from .scrape import probe_metadata, signal_from_metadata, transcribe
+from .scripts import generate_scripts as generate_scripts_from_items, write_generated_scripts
 from .storage import ensure_dirs, load_patterns, load_watchlist, save_watchlist, upsert_patterns
 
 app = typer.Typer(help="Local-first content intelligence for social content signals.")
@@ -170,6 +171,19 @@ def sync_notion(run_json: Annotated[Path, typer.Argument(help="Path to a data/ru
     console.print(f"[green]Synced {len(result.pattern_pages)} Pattern Bank rows.[/green]")
     if result.summary_page:
         console.print(f"[green]Summary page:[/green] {result.summary_page}")
+
+
+@app.command("generate-scripts")
+def generate_scripts_cmd(
+    run_json: Annotated[Path, typer.Argument(help="Path to a data/runs/*.json file")],
+    top: Annotated[int, typer.Option(help="Number of scripts to generate")] = 3,
+) -> None:
+    """Generate ready-to-film Don-style scripts from a scan run."""
+    items = load_run(run_json)
+    scripts = generate_scripts_from_items(items, top=top)
+    md_path, json_path = write_generated_scripts(scripts, run_json.stem)
+    console.print(f"[green]Generated {len(scripts)} scripts:[/green] {md_path}")
+    console.print(f"[green]JSON:[/green] {json_path}")
 
 
 @app.command("schedule-helper")
