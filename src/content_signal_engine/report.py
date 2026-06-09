@@ -80,6 +80,12 @@ def render_markdown(items: list[AnalysedSignal], run_id: str) -> str:
             f"**Don adaptation:** {a.don_adaptation}",
             "",
         ]
+        if a.audience_phrases:
+            lines += ["**Audience language / self-recognition phrases**", ""]
+            lines.extend([f"- {phrase}" for phrase in a.audience_phrases])
+            lines.append("")
+        else:
+            lines += ["**Audience language:** public comment text unavailable for this post; using visible metrics/transcript only.", ""]
         if a.anti_pattern_flags:
             lines += ["**Watch-outs**", ""]
             lines.extend([f"- {flag}" for flag in a.anti_pattern_flags])

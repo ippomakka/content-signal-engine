@@ -1,6 +1,8 @@
 data/runs/
 data/reports/
 data/media/
+data/notion_exports/
+tmp-comments.txt
 .venv/
 __pycache__/
 *.pyc

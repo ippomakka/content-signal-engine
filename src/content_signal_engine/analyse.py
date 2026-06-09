@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from .comments import extract_audience_phrases
 from .models import PostSignal, SignalAnalysis
 
 DON_KEYWORDS = {
@@ -167,6 +168,7 @@ def analyse_signal(signal: PostSignal) -> SignalAnalysis:
     driver = emotional_driver(text)
     fmt = format_type(signal, text)
     fit, flags = don_fit(text)
+    audience_phrases = extract_audience_phrases(signal.audience_comments, text)
     pattern = reusable_pattern(hook_type, driver, fmt)
     return SignalAnalysis(
         hook=hook,
@@ -174,6 +176,7 @@ def analyse_signal(signal: PostSignal) -> SignalAnalysis:
         emotional_driver=driver,
         format_type=fmt,
         why_it_worked=why_it_worked(hook_type, driver, fmt, signal),
+        audience_phrases=audience_phrases,
         don_fit_score=fit,
         outlier_score=outlier_score(signal),
         anti_pattern_flags=flags,

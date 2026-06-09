@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .comments import comments_from_metadata
 from .models import PostSignal, PublicMetrics, WatchItem
 from .storage import MEDIA_DIR, ensure_dirs
 
@@ -57,6 +58,7 @@ def signal_from_metadata(url: str, metadata: dict, item: WatchItem | None = None
             comments=_metric_int(metadata.get("comment_count")),
             reposts=_metric_int(metadata.get("repost_count")),
         ),
+        audience_comments=comments_from_metadata(metadata),
         raw_metadata={
             "id": metadata.get("id"),
             "extractor": metadata.get("extractor"),

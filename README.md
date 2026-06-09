@@ -5,12 +5,16 @@ Content Signal Engine is a local-first content intelligence CLI for finding what
 ## MVP features
 
 - Watchlist-driven scans from Reel/post URLs
+- Public account/reels-page discovery via `yt-dlp --flat-playlist` where the platform extractor supports listing (verified with YouTube Shorts; Instagram account listing is currently extractor-fragile, so specific Reel URLs remain the reliable Instagram path)
 - `yt-dlp` metadata probing and media download
 - Whisper transcription via `uvx --from openai-whisper whisper`
+- Optional manual/exported comments file for audience-language extraction
 - Heuristic content analysis: hook type, emotional driver, format, Don-fit score, anti-pattern flags
 - Outlier scoring from public metrics when available
 - Markdown + JSON reports
+- Notion-ready CSV exports for Daily Signal Log, Pattern Bank, and Daily Research Summaries
 - Pattern bank persistence
+- Weekly report runner helper
 
 ## Requirements
 
@@ -26,8 +30,21 @@ No Instagram login is required for public URLs, but public availability can vary
 ```bash
 uv run cse --help
 uv run cse init
+uv run cse discover-account @somecreator --max-results 12 --add --lane "digital minimalism"
 uv run cse add-url "https://www.instagram.com/reel/.../" --creator "creator_name"
-uv run cse scan --limit 5
+uv run cse scan --limit 5 --notion-export
+```
+
+Optional audience-language input when comments are exported manually:
+
+```bash
+uv run cse scan --comments-file comments.txt --notion-export
+```
+
+Create a weekly runner script:
+
+```bash
+uv run cse schedule-helper --limit 20
 ```
 
 Outputs are written to `data/reports/` and structured data to `data/runs/`.

@@ -27,9 +27,9 @@ It is intentionally not a fake "viral predictor." The first version focuses on d
 
 ## Improvements planned after MVP
 
-- Account-level scraping / recent-post discovery
-- Comment-language extraction
-- Notion sync for Daily Signal Log + Pattern Bank
-- Scheduled cron reports
+- Account-level scraping / recent-post discovery (first pass implemented via `discover-account`)
+- Comment-language extraction (first pass implemented from extractor comments or manual comment exports)
+- Notion CSV export for Daily Signal Log + Pattern Bank + Daily Research Summaries
+- Scheduled report shell runner
 - HTML dashboard
 - Creator baseline scoring for true account-relative outliers

@@ -31,6 +31,7 @@ class PostSignal(BaseModel):
     upload_date: str | None = None
     metrics: PublicMetrics = Field(default_factory=PublicMetrics)
     transcript: str | None = None
+    audience_comments: list[str] = Field(default_factory=list)
     raw_metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -40,6 +41,7 @@ class SignalAnalysis(BaseModel):
     emotional_driver: str
     format_type: str
     why_it_worked: list[str]
+    audience_phrases: list[str] = Field(default_factory=list)
     don_fit_score: int
     outlier_score: float
     anti_pattern_flags: list[str]
