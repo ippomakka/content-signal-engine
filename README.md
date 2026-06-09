@@ -33,6 +33,19 @@ uv run cse init
 uv run cse discover-account @somecreator --max-results 12 --add --lane "digital minimalism"
 uv run cse add-url "https://www.instagram.com/reel/.../" --creator "creator_name"
 uv run cse scan --limit 5 --notion-export
+uv run cse scan --limit 5 --notion-sync
+```
+
+Direct sync uses Don's existing `Daily Content Signals` Notion databases under `A New Reality`:
+
+- Daily Signal Log
+- Pattern Bank
+- Daily Research Summaries
+
+You can also sync an existing run:
+
+```bash
+uv run cse sync-notion data/runs/<run-id>.json
 ```
 
 Optional audience-language input when comments are exported manually:

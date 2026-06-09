@@ -12,6 +12,7 @@ from .analyse import analyse_signal
 from .comments import load_comments_file
 from .discover import discover_with_ytdlp, instagram_reels_url
 from .models import AnalysedSignal, WatchItem
+from .notion_direct import load_run, sync_run_to_notion
 from .notion_export import export_notion_csv, write_notion_payload
 from .report import write_outputs
 from .schedule import cron_hint, write_runner
@@ -106,6 +107,7 @@ def scan(
     whisper_model: Annotated[str, typer.Option(help="Whisper model to use when transcribing")] = "small.en",
     comments_file: Annotated[Path | None, typer.Option(help="Optional JSON/text comments export for audience-language extraction")] = None,
     notion_export: Annotated[bool, typer.Option(help="Write Notion-ready CSV exports after scanning")] = False,
+    notion_sync: Annotated[bool, typer.Option(help="Directly sync this run to Don's Notion Daily Content Signals databases")] = False,
 ) -> None:
     """Scan watchlist URLs, analyse signals, and write a report."""
     ensure_dirs()
@@ -139,6 +141,11 @@ def scan(
         payload = write_notion_payload(analysed, run_id)
         console.print(f"[green]Notion CSVs:[/green] {signal_csv}, {pattern_csv}, {summary_csv}")
         console.print(f"[green]Notion JSON payload:[/green] {payload}")
+    if notion_sync:
+        result = sync_run_to_notion(analysed, run_id)
+        console.print(f"[green]Synced {len(result.daily_signal_pages)} signals to Notion.[/green]")
+        if result.summary_page:
+            console.print(f"[green]Summary page:[/green] {result.summary_page}")
 
 
 @app.command("export-notion")
@@ -152,6 +159,17 @@ def export_notion(run_json: Annotated[Path, typer.Argument(help="Path to a data/
     payload = write_notion_payload(items, run_id)
     console.print(f"[green]Notion CSVs:[/green] {signal_csv}, {pattern_csv}, {summary_csv}")
     console.print(f"[green]Notion JSON payload:[/green] {payload}")
+
+
+@app.command("sync-notion")
+def sync_notion(run_json: Annotated[Path, typer.Argument(help="Path to a data/runs/*.json file")]) -> None:
+    """Directly sync an existing run into Don's Notion Daily Content Signals databases."""
+    items = load_run(run_json)
+    result = sync_run_to_notion(items, run_json.stem)
+    console.print(f"[green]Synced {len(result.daily_signal_pages)} Daily Signal Log rows.[/green]")
+    console.print(f"[green]Synced {len(result.pattern_pages)} Pattern Bank rows.[/green]")
+    if result.summary_page:
+        console.print(f"[green]Summary page:[/green] {result.summary_page}")
 
 
 @app.command("schedule-helper")
