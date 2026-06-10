@@ -1,33 +1,5 @@
 [
   {
-    "url": "https://www.instagram.com/reel/DZQZOVhgNvK/?igsh=a2ttNmpzaWZzMWlq",
-    "creator": "source reel",
-    "lane": "creator tooling",
-    "notes": null,
-    "added_at": "2026-06-09T12:53:37.605124"
-  },
-  {
-    "url": "https://www.youtube.com/shorts/0T4LCvf-3Jw",
-    "creator": "Mark Manson",
-    "lane": "purpose / meaning / uncomfortable self-honesty",
-    "notes": "discovered from account",
-    "added_at": "2026-06-09T13:22:33.795165"
-  },
-  {
-    "url": "https://www.youtube.com/shorts/4kWrynLC9Mg",
-    "creator": "Mark Manson",
-    "lane": "purpose / meaning / uncomfortable self-honesty",
-    "notes": "discovered from account",
-    "added_at": "2026-06-09T13:22:33.795312"
-  },
-  {
-    "url": "https://www.youtube.com/shorts/pMkM3eXc-9E",
-    "creator": "Mark Manson",
-    "lane": "purpose / meaning / uncomfortable self-honesty",
-    "notes": "discovered from account",
-    "added_at": "2026-06-09T13:22:33.795314"
-  },
-  {
     "url": "https://www.youtube.com/shorts/z8FWwQS2oeo",
     "creator": "HealthyGamerGG",
     "lane": "attention / mental health / under-30 stuckness",
@@ -187,5 +159,33 @@
     "lane": "ideas / psychology / culture",
     "notes": "discovered from account",
     "added_at": "2026-06-09T13:24:33.294726"
+  },
+  {
+    "url": "https://www.instagram.com/reel/DZQZOVhgNvK/?igsh=a2ttNmpzaWZzMWlq",
+    "creator": "source reel",
+    "lane": "creator tooling",
+    "notes": null,
+    "added_at": "2026-06-09T12:53:37.605124"
+  },
+  {
+    "url": "https://www.youtube.com/shorts/0T4LCvf-3Jw",
+    "creator": "Mark Manson",
+    "lane": "purpose / meaning / uncomfortable self-honesty",
+    "notes": "discovered from account",
+    "added_at": "2026-06-09T13:22:33.795165"
+  },
+  {
+    "url": "https://www.youtube.com/shorts/4kWrynLC9Mg",
+    "creator": "Mark Manson",
+    "lane": "purpose / meaning / uncomfortable self-honesty",
+    "notes": "discovered from account",
+    "added_at": "2026-06-09T13:22:33.795312"
+  },
+  {
+    "url": "https://www.youtube.com/shorts/pMkM3eXc-9E",
+    "creator": "Mark Manson",
+    "lane": "purpose / meaning / uncomfortable self-honesty",
+    "notes": "discovered from account",
+    "added_at": "2026-06-09T13:22:33.795314"
   }
 ]

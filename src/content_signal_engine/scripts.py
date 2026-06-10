@@ -64,7 +64,7 @@ def title_for_lane(lane: str) -> str:
 
 def hook_for_lane(lane: str) -> str:
     return {
-        "Autopilot": "I don’t think I’m addicted to my phone. I think I’m scared of the silence after I put it down.",
+        "Autopilot": "I keep calling it a quick scroll, but sometimes it feels more like leaving the room without moving.",
         "Default Life": "The scariest thing isn’t failing. It’s succeeding at a life you secretly don’t want.",
         "Presence / Reality Is Weird": "Sometimes normal life only feels normal because we stopped paying attention.",
         "Becoming Yourself": "I used to think I needed more discipline. I think I actually needed fewer escape routes.",
@@ -270,7 +270,13 @@ def generate_scripts(items: list[AnalysedSignal], top: int = 3) -> list[Generate
         if len(scripts) >= top:
             break
         generated = script_for(item)
-        if all(existing.source_url != generated.source_url for existing in scripts):
+        is_duplicate = any(
+            existing.source_url == generated.source_url
+            or existing.hook == generated.hook
+            or existing.title == generated.title
+            for existing in scripts
+        )
+        if not is_duplicate:
             scripts.append(generated)
     return scripts[:top]
 
