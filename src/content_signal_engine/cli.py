@@ -16,12 +16,24 @@ from .notion_direct import load_run, sync_generated_scripts, sync_run_to_notion
 from .notion_export import export_notion_csv, write_notion_payload
 from .report import write_outputs
 from .schedule import cron_hint, write_runner
-from .scrape import probe_metadata, signal_from_metadata, transcribe
+from .scrape import platform_from_url, probe_metadata, signal_from_metadata, transcribe
 from .scripts import generate_scripts as generate_scripts_from_items, write_generated_scripts
-from .storage import ensure_dirs, load_patterns, load_watchlist, save_watchlist, upsert_patterns
+from .storage import RUNS_DIR, ensure_dirs, load_patterns, load_watchlist, save_watchlist, upsert_patterns
 
 app = typer.Typer(help="Local-first content intelligence for social content signals.")
 console = Console()
+
+
+def previously_scanned_urls() -> set[str]:
+    """Return URLs that have already been analysed in prior runs."""
+    urls: set[str] = set()
+    for path in RUNS_DIR.glob("*.json"):
+        try:
+            items = load_run(path)
+        except Exception:
+            continue
+        urls.update(item.signal.url for item in items)
+    return urls
 
 
 @app.command()
@@ -104,6 +116,8 @@ def list_items() -> None:
 @app.command()
 def scan(
     limit: Annotated[int | None, typer.Option(help="Maximum watchlist items to scan")] = None,
+    platform: Annotated[str | None, typer.Option(help="Only scan a specific platform, e.g. instagram, youtube, tiktok")] = None,
+    fresh: Annotated[bool, typer.Option(help="Skip URLs already analysed in previous runs; use --no-fresh to deliberately rescan")] = True,
     no_transcribe: Annotated[bool, typer.Option(help="Skip Whisper transcription and analyse metadata/caption only")] = False,
     whisper_model: Annotated[str, typer.Option(help="Whisper model to use when transcribing")] = "small.en",
     comments_file: Annotated[Path | None, typer.Option(help="Optional JSON/text comments export for audience-language extraction")] = None,
@@ -114,10 +128,19 @@ def scan(
     """Scan watchlist URLs, analyse signals, and write a report."""
     ensure_dirs()
     items = load_watchlist()
+    if platform:
+        wanted = platform.lower()
+        items = [item for item in items if platform_from_url(item.url) == wanted]
+    if fresh:
+        seen = previously_scanned_urls()
+        items = [item for item in items if item.url not in seen]
     if limit is not None:
         items = items[:limit]
     if not items:
-        console.print("[yellow]Watchlist is empty. Add URLs with `cse add-url ...`.[/yellow]")
+        if fresh:
+            console.print("[yellow]No fresh watchlist URLs left. Add/discover new URLs, rotate the watchlist, or use `--no-fresh` to deliberately rescan.[/yellow]")
+        else:
+            console.print("[yellow]Watchlist is empty. Add URLs with `cse add-url ...`.[/yellow]")
         raise typer.Exit(1)
     manual_comments = load_comments_file(comments_file) if comments_file else {}
     run_id = datetime.utcnow().strftime("%Y%m%d-%H%M%S")

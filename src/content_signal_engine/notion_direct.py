@@ -21,6 +21,15 @@ DEFAULT_PATTERN_BANK_DB = "b879df0a-4d24-46c3-82b8-27ac5444e882"
 DEFAULT_DAILY_SUMMARY_DB = "9242d78a-4cca-410a-aa3a-c43db5a41dae"
 DEFAULT_GENERATED_SCRIPTS_DB = "e8841671-8865-4748-9a9c-73a8024b9c92"
 
+# Queryable data-source IDs for the same databases. Notion API v2025-09-03
+# separates database IDs (used when creating rows) from data-source IDs (used
+# when querying). Keeping these lets sync be idempotent instead of blindly
+# creating duplicate rows every time the same URL is scanned.
+DEFAULT_DAILY_SIGNAL_DS = "1e52d931-dd9c-4695-8c7b-66362acfa3d7"
+DEFAULT_PATTERN_BANK_DS = "5c4cf0f2-868c-4e78-b560-e78decc9c24a"
+DEFAULT_DAILY_SUMMARY_DS = "f301a06d-3d4a-4c5e-89cc-a09379fa0b3a"
+DEFAULT_GENERATED_SCRIPTS_DS = "c1326640-601e-4e0a-b154-79a6c19d1171"
+
 
 @dataclass(frozen=True)
 class NotionSyncResult:
@@ -114,6 +123,37 @@ def create_page(database_id: str, properties: dict[str, Any], children: list[dic
     return page
 
 
+def data_source_id_for_database(database_id: str) -> str:
+    """Resolve a database ID to its queryable data-source ID."""
+    known = {
+        DEFAULT_DAILY_SIGNAL_DB: DEFAULT_DAILY_SIGNAL_DS,
+        DEFAULT_PATTERN_BANK_DB: DEFAULT_PATTERN_BANK_DS,
+        DEFAULT_DAILY_SUMMARY_DB: DEFAULT_DAILY_SUMMARY_DS,
+        DEFAULT_GENERATED_SCRIPTS_DB: DEFAULT_GENERATED_SCRIPTS_DS,
+    }
+    if database_id in known:
+        return known[database_id]
+    metadata = notion_request("GET", f"databases/{database_id}")
+    return metadata["data_sources"][0]["id"]
+
+
+def existing_page_url(data_source_id: str, property_name: str, property_type: str, value: str) -> str | None:
+    """Return an existing Notion row URL for an exact key match, if present."""
+    if not value:
+        return None
+    if property_type == "url":
+        filter_body = {"property": property_name, "url": {"equals": value}}
+    elif property_type == "rich_text":
+        filter_body = {"property": property_name, "rich_text": {"equals": value}}
+    elif property_type == "title":
+        filter_body = {"property": property_name, "title": {"equals": value}}
+    else:
+        raise ValueError(f"Unsupported Notion filter property type: {property_type}")
+    result = notion_request("POST", f"data_sources/{data_source_id}/query", {"filter": filter_body, "page_size": 1})
+    rows = result.get("results", [])
+    return rows[0].get("url") if rows else None
+
+
 def performance_text(item: AnalysedSignal) -> str:
     s = item.signal
     metrics: list[str] = []
@@ -150,6 +190,9 @@ def signal_children(item: AnalysedSignal) -> list[dict[str, Any]]:
 
 def sync_daily_signal(item: AnalysedSignal, database_id: str) -> str:
     s, a = item.signal, item.analysis
+    existing = existing_page_url(data_source_id_for_database(database_id), "Link", "url", s.url)
+    if existing:
+        return existing
     props = {
         "Name": title(a.hook[:90] or s.title or "Untitled signal"),
         "Date": date_prop(s.upload_date),
@@ -170,6 +213,9 @@ def sync_daily_signal(item: AnalysedSignal, database_id: str) -> str:
 
 def sync_pattern(item: AnalysedSignal, database_id: str) -> str:
     a = item.analysis
+    existing = existing_page_url(data_source_id_for_database(database_id), "Example Found", "rich_text", item.signal.url)
+    if existing:
+        return existing
     props = {
         "Name": title(a.reusable_pattern[:90]),
         "Pattern Type": select("Hook"),
@@ -184,6 +230,14 @@ def sync_pattern(item: AnalysedSignal, database_id: str) -> str:
 def sync_summary(items: list[AnalysedSignal], run_id: str, database_id: str) -> str | None:
     if not items:
         return None
+    existing = existing_page_url(
+        data_source_id_for_database(database_id),
+        "Name",
+        "title",
+        f"Content Signal Engine — {run_id}",
+    )
+    if existing:
+        return existing
     strongest = max(items, key=lambda item: (item.analysis.don_fit_score, item.analysis.outlier_score))
     report = render_markdown(items, run_id)
     props = {
@@ -214,6 +268,9 @@ def sync_summary(items: list[AnalysedSignal], run_id: str, database_id: str) -> 
 
 
 def sync_generated_script(script: GeneratedScript, run_id: str, database_id: str, priority: str = "Medium") -> str:
+    existing = existing_page_url(data_source_id_for_database(database_id), "Source URL", "url", script.source_url)
+    if existing:
+        return existing
     props = {
         "Name": title(script.title),
         "Status": select("Review"),
