@@ -15,7 +15,7 @@
     "example_url": "https://www.youtube.com/shorts/0T4LCvf-3Jw",
     "don_version": "Translate the curiosity into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979378",
-    "times_seen": 4
+    "times_seen": 5
   },
   {
     "name": "Contradiction hook: expected belief \u2192 uncomfortable opposite \u2192 lived example \u2192 n",
@@ -33,7 +33,7 @@
     "example_url": "https://www.youtube.com/shorts/z8FWwQS2oeo",
     "don_version": "Translate the identity into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979389",
-    "times_seen": 5
+    "times_seen": 6
   },
   {
     "name": "Question + hope: open with the tension, make it concrete, then translate it into",
@@ -69,6 +69,15 @@
     "example_url": "https://www.youtube.com/shorts/xTBBLCzbD9I",
     "don_version": "Translate the fear into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-12T08:49:34.695957",
+    "times_seen": 1
+  },
+  {
+    "name": "Question + curiosity: open with the tension, make it concrete, then translate it",
+    "pattern_type": "question",
+    "description": "Question + curiosity: open with the tension, make it concrete, then translate it into a repeatable explainer reel.",
+    "example_url": "https://www.instagram.com/markmanson/reel/DZOHX3YFa80/",
+    "don_version": "Translate the curiosity into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
+    "first_seen": "2026-06-12T09:23:39.260898",
     "times_seen": 1
   }
 ]

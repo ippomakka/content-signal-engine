@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -62,6 +63,88 @@ def title_for_lane(lane: str) -> str:
     }.get(lane, "Trying to wake up in public")
 
 
+def clean_text(text: str | None) -> str:
+    return re.sub(r"\s+", " ", text or "").strip()
+
+
+def trim_words(text: str | None, limit: int = 18) -> str:
+    words = clean_text(text).split()
+    if len(words) <= limit:
+        return " ".join(words)
+    return " ".join(words[:limit]).rstrip(",.;:") + "..."
+
+
+def source_insight(item: AnalysedSignal) -> str:
+    """Use the actual scanned signal as the seed so daily scripts do not repeat templates."""
+    for candidate in [item.analysis.hook, item.signal.title, item.signal.caption]:
+        cleaned = trim_words(candidate, 24)
+        if cleaned:
+            return cleaned
+    return "a normal moment suddenly feeling stranger than it should"
+
+
+def source_title(item: AnalysedSignal, lane: str) -> str:
+    theme = theme_from_signal(item)
+    if theme == "night_before":
+        return "Your morning starts the night before"
+    if theme == "micro_interactions":
+        return "Your life changes in tiny moments"
+    if theme == "borrowed_beliefs":
+        return "Old fear with better branding"
+    insight = trim_words(source_insight(item), 8).rstrip(".")
+    return f"{lane}: {insight}"
+
+
+def question_from_signal(item: AnalysedSignal, lane: str) -> str:
+    hook = clean_text(item.analysis.hook).lower()
+    if "opinion" in hook or "judge" in hook or "other people" in hook:
+        return "how much of me is just borrowed from other people?"
+    if "complicated" in hook or "desires" in hook or "want" in hook:
+        return "why is it so hard to say what i actually want?"
+    if "drink" in hook or "convincing" in hook or "no" in hook:
+        return "where am i still explaining boundaries that should be obvious?"
+    if "time" in hook or "routine" in hook or "desk" in hook:
+        return "is this helping me live, or just helping me optimise?"
+    if lane == "Default Life":
+        return "what if i win the wrong game?"
+    if lane == "Autopilot":
+        return "what am i trying not to feel?"
+    if lane == "Presence / Reality Is Weird":
+        return "who is actually steering this thing?"
+    return "what am i avoiding being honest about?"
+
+
+def hook_from_signal(item: AnalysedSignal, lane: str) -> str:
+    hook = clean_text(item.analysis.hook).lower()
+    if "morning routine" in hook or "life hacking" in hook:
+        return "I don’t think the problem is my morning routine. I think it’s what I let happen the night before."
+    if "divorced" in hook or "positive interactions" in hook:
+        return "Apparently relationships die in tiny moments. I think our lives probably do too."
+    if "dating beliefs" in hook or "myth versus fact" in hook:
+        return "I keep wondering how many beliefs I call standards are actually just old fear wearing a nice outfit."
+    if "opinion" in hook or "other people" in hook:
+        return "I keep thinking about how much of my self-image is rented from other people."
+    if "complicated" in hook or "desires" in hook or "want" in hook:
+        return "I don’t think I’m unclear because I have no direction. I think I’m scared of wanting the wrong thing out loud."
+    if "drink" in hook or "convincing" in hook or "no" in hook:
+        return "It’s weird how fast a tiny boundary can show you who actually respects your life."
+    if "time" in hook or "routine" in hook or "desk" in hook:
+        return "I’m starting to realise optimisation can become another way to avoid being present."
+    return hook_for_lane(lane)
+
+
+def theme_from_signal(item: AnalysedSignal) -> str | None:
+    hook = clean_text(item.analysis.hook).lower()
+    text = " ".join(clean_text(part).lower() for part in [item.signal.transcript, item.signal.caption, item.signal.title])
+    if "morning routine" in hook or "night before" in text or "decision fatigue" in text:
+        return "night_before"
+    if "divorced" in hook or "positive interactions" in text or "negative interactions" in text:
+        return "micro_interactions"
+    if "dating beliefs" in hook or "myth versus fact" in hook:
+        return "borrowed_beliefs"
+    return None
+
+
 def hook_for_lane(lane: str) -> str:
     return {
         "Autopilot": "I keep calling it a quick scroll, but sometimes it feels more like leaving the room without moving.",
@@ -73,14 +156,123 @@ def hook_for_lane(lane: str) -> str:
 
 def script_for(item: AnalysedSignal) -> GeneratedScript:
     lane = choose_lane(item)
-    hook = hook_for_lane(lane)
-    title = title_for_lane(lane)
+    hook = hook_from_signal(item, lane)
+    title = source_title(item, lane)
     source_line = item.analysis.reusable_pattern
+    insight = source_insight(item)
+    on_screen = question_from_signal(item, lane)
+    platform_line = (
+        "I saw an Instagram Reel today that hit because it named something specific."
+        if item.signal.platform == "instagram"
+        else "I saw a short today that hit because it named something specific."
+    )
+    theme = theme_from_signal(item)
 
-    if lane == "Autopilot":
+    if theme == "night_before":
         body = f"""{hook}
 
-Because yesterday I opened Instagram before I even knew what I was feeling.
+Because I keep trying to fix my life at the exact moment I have the least energy to fix it.
+
+I wake up tired and expect morning-me to be some disciplined little monk.
+
+But morning-me is just me with worse hair and less patience.
+
+So maybe the real move is less glamorous.
+
+Make the decision before I’m tired.
+Put the phone somewhere annoying before I want it.
+Choose the first task before the day starts bargaining with me.
+
+Not because I’m trying to become some optimised productivity robot.
+
+Because I’m trying to stop handing the first hour of my life to whatever app screams the loudest.
+
+That’s the uncomfortable part.
+
+A lot of my autopilot doesn’t start in the moment I scroll.
+
+It starts the night before, when I leave every escape route open.
+
+So tonight I’m making tomorrow slightly harder to abandon.
+
+Tiny, boring, probably effective.
+
+Annoying."""
+        on_screen = "your morning starts the night before"
+    elif theme == "micro_interactions":
+        body = f"""{hook}
+
+Not in one dramatic movie scene.
+
+In tiny little moments you barely count.
+
+The eye roll.
+The sharp reply.
+The dismissive laugh.
+The one second where someone reaches for connection and you’re half inside your phone.
+
+And I’ve been thinking about that beyond relationships.
+
+Because maybe a life doesn’t fall apart in one huge decision either.
+
+Maybe it’s all the tiny interactions you have with yourself.
+
+You say you want peace, then start the morning with panic scrolling.
+You say you want freedom, then keep asking strangers online who you’re allowed to be.
+You say you want a real life, then disappear into the screen every time silence shows up.
+
+None of it feels that serious in the moment.
+
+But it stacks.
+
+And eventually your life starts reflecting the tiny things you kept letting slide.
+
+That is deeply rude of reality.
+
+But probably useful."""
+        on_screen = "your life changes in tiny moments"
+    elif theme == "borrowed_beliefs":
+        body = f"""{hook}
+
+I’ll call something a preference.
+
+But if I’m honest, sometimes it’s just protection.
+
+I’ll say “I’m just not that kind of person.”
+
+But sometimes that means I tried something once, felt embarrassed, and built a whole identity around never risking that feeling again.
+
+That’s what scares me about autopilot.
+
+It doesn’t always feel like scrolling or wasting time.
+
+Sometimes it sounds mature.
+It sounds logical.
+It sounds like standards.
+It sounds like “that’s just who I am.”
+
+And maybe some of it is true.
+
+But I want to get better at asking:
+
+Did I choose this belief consciously?
+
+Or did I inherit it from fear and then decorate it so it looked like wisdom?
+
+Because I don’t want a personality that is mostly old avoidance with better branding."""
+        on_screen = "is this belief mine, or just old fear?"
+    elif lane == "Autopilot":
+        body = f"""{hook}
+
+{platform_line}
+
+The surface idea was basically:
+
+{insight}
+
+But the bit I care about is what it points to in my own day.
+
+Yesterday I opened Instagram before I even knew what I was feeling.
 
 Not because I had something to check.
 
@@ -111,9 +303,16 @@ When I reach for it, I pause and ask, “What am I trying not to feel?”
 Annoyingly, that question works.
 
 And I kind of hate that."""
-        on_screen = "what am I trying not to feel?"
     elif lane == "Default Life":
         body = f"""{hook}
+
+{platform_line}
+
+The surface idea was basically:
+
+{insight}
+
+And it made me think about the life I keep accidentally practising for.
 
 Because failing would at least be honest.
 
@@ -139,9 +338,18 @@ Not dramatically.
 Just honestly.
 
 One uncomfortable question at a time."""
-        on_screen = "what if you win the wrong game?"
     elif lane == "Presence / Reality Is Weird":
         body = f"""{hook}
+
+{platform_line}
+
+The surface idea was basically:
+
+{insight}
+
+And it did that thing good content does.
+
+It made something normal feel suspicious again.
 
 Like, have you ever looked around and realised how much of your day is just… assumed?
 
@@ -170,9 +378,16 @@ Like… wait.
 Who is actually steering this thing?
 
 That question has been following me around lately."""
-        on_screen = "who is actually steering this thing?"
     else:
         body = f"""{hook}
+
+{platform_line}
+
+The surface idea was basically:
+
+{insight}
+
+But the part that stuck with me was honesty.
 
 Because every time I try to change my life, I notice how many little doors I’ve built to avoid myself.
 
@@ -195,7 +410,6 @@ And that’s embarrassing.
 But also kind of freeing.
 
 Because maybe becoming yourself starts with admitting how much energy you spend avoiding yourself."""
-        on_screen = "how much energy do you spend avoiding yourself?"
 
     caption = caption_for(lane)
     return GeneratedScript(
