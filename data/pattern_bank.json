@@ -6,7 +6,7 @@
     "example_url": "https://www.instagram.com/reel/DZQZOVhgNvK/?igsh=a2ttNmpzaWZzMWlq",
     "don_version": "Turn the demo into a transparent 'building in public' post: show the system finding signals, then ask what it says about our attention instead of flexing virality.",
     "first_seen": "2026-06-09T12:54:34.325806",
-    "times_seen": 5
+    "times_seen": 6
   },
   {
     "name": "Statement + curiosity: open with the tension, make it concrete, then translate i",
@@ -24,7 +24,7 @@
     "example_url": "https://www.youtube.com/shorts/pMkM3eXc-9E",
     "don_version": "Translate the curiosity into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979387",
-    "times_seen": 2
+    "times_seen": 3
   },
   {
     "name": "Statement + identity: open with the tension, make it concrete, then translate it",
@@ -33,7 +33,7 @@
     "example_url": "https://www.youtube.com/shorts/z8FWwQS2oeo",
     "don_version": "Translate the identity into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979389",
-    "times_seen": 3
+    "times_seen": 5
   },
   {
     "name": "Question + hope: open with the tension, make it concrete, then translate it into",
@@ -42,7 +42,7 @@
     "example_url": "https://www.youtube.com/shorts/eOgvmuivGR0",
     "don_version": "Translate the hope into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979392",
-    "times_seen": 2
+    "times_seen": 3
   },
   {
     "name": "Question + relief: open with the tension, make it concrete, then translate it in",
@@ -51,6 +51,24 @@
     "example_url": "https://www.youtube.com/shorts/BljI_i4_vek",
     "don_version": "Translate the relief into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
     "first_seen": "2026-06-09T13:34:14.979395",
+    "times_seen": 3
+  },
+  {
+    "name": "Statement + relief: open with the tension, make it concrete, then translate it i",
+    "pattern_type": "statement",
+    "description": "Statement + relief: open with the tension, make it concrete, then translate it into a repeatable talking-head insight.",
+    "example_url": "https://www.youtube.com/shorts/k9JarPLnLRo",
+    "don_version": "Translate the relief into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
+    "first_seen": "2026-06-12T08:49:34.695948",
+    "times_seen": 2
+  },
+  {
+    "name": "Question + fear: open with the tension, make it concrete, then translate it into",
+    "pattern_type": "question",
+    "description": "Question + fear: open with the tension, make it concrete, then translate it into a repeatable explainer reel.",
+    "example_url": "https://www.youtube.com/shorts/xTBBLCzbD9I",
+    "don_version": "Translate the fear into Don's world: less guru certainty, more honest best-friend realisation about waking up from autopilot.",
+    "first_seen": "2026-06-12T08:49:34.695957",
     "times_seen": 1
   }
 ]

@@ -98,9 +98,9 @@ We call it needing a break.
 
 But sometimes I think scrolling is just the socially acceptable way to disappear from your own life for a bit.
 
-So the thing I’m taking from this is simple.
+So I’m trying to stop making it this huge self-improvement project.
 
-Before trying to fix your whole life, notice the first tiny moment you abandon it.
+Before fixing my whole life, I just want to notice the first tiny moment I abandon it.
 
 For me, it’s usually the phone.
 
@@ -127,11 +127,6 @@ What scares me more is doing everything “right” and slowly becoming a strang
 Getting good at the routine.
 Getting praised for the version of me that knows how to perform.
 Staying busy enough that I never have to ask if I even wanted this.
-
-I keep seeing this pattern everywhere.
-
-Open with the thing everyone accepts.
-Then point at the quiet cost underneath it.
 
 Because I don’t think most people are lazy.
 
@@ -160,9 +155,9 @@ Repeat.
 
 And somehow that’s considered normal.
 
-The thing I want to keep from this pattern is the interruption.
+That’s the interruption I keep coming back to.
 
-That moment where a normal habit suddenly looks strange.
+The moment where a normal habit suddenly looks strange.
 
 Because I think waking up isn’t always some massive spiritual moment.
 
@@ -189,10 +184,7 @@ The waiting until I feel ready.
 
 And then I wonder why nothing feels like it’s moving.
 
-The useful pattern here is making the invisible thing obvious.
-Then making it personal enough that someone feels less insane.
-
-So here’s the honest version.
+And here’s the honest version.
 
 I don’t think I’m stuck because I don’t know what to do.
 
