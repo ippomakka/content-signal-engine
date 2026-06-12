@@ -32,9 +32,14 @@ uv run cse --help
 uv run cse init
 uv run cse discover-account @somecreator --max-results 12 --add --lane "digital minimalism"
 uv run cse add-url "https://www.instagram.com/reel/.../" --creator "creator_name"
+uv run cse discover-daily --max-sources 6 --max-per-source 2 --web-results 2 --add
 uv run cse scan --limit 5 --notion-export
 uv run cse scan --limit 5 --notion-sync
 ```
+
+`discover-daily` is the robust discovery layer. It checks seeded creator sources, skips URLs already watchlisted or scanned, collects raw Reddit audience-pain candidates through public PullPush search, writes a discovery report to `data/discovery/`, and can add fresh scan-ready social/video URLs to the watchlist. Reddit/web candidates are marked as pain-language research rather than scan-ready video URLs.
+
+Daily scans are fresh by default: `uv run cse scan --limit 5 --notion-sync` skips URLs that already exist in previous local runs. Use `--no-fresh` only when you intentionally want to rescan old material.
 
 When `--notion-sync` is used, scan now automatically generates review scripts and puts them into the Notion `Generated Scripts` database. Default is 3 scripts; use `--script-count 0` to disable or `--script-count 5` for more.
 

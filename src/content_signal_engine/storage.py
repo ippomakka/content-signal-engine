@@ -9,13 +9,15 @@ from .models import AnalysedSignal, Pattern, WatchItem
 DATA_DIR = Path("data")
 WATCHLIST_PATH = DATA_DIR / "watchlist.json"
 PATTERN_BANK_PATH = DATA_DIR / "pattern_bank.json"
+SOURCE_SEEDS_PATH = DATA_DIR / "source_seeds.json"
+DISCOVERY_DIR = DATA_DIR / "discovery"
 RUNS_DIR = DATA_DIR / "runs"
 REPORTS_DIR = DATA_DIR / "reports"
 MEDIA_DIR = DATA_DIR / "media"
 
 
 def ensure_dirs() -> None:
-    for path in [DATA_DIR, RUNS_DIR, REPORTS_DIR, MEDIA_DIR]:
+    for path in [DATA_DIR, RUNS_DIR, REPORTS_DIR, MEDIA_DIR, DISCOVERY_DIR]:
         path.mkdir(parents=True, exist_ok=True)
     if not WATCHLIST_PATH.exists():
         WATCHLIST_PATH.write_text("[]\n")

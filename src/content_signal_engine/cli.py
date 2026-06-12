@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -10,7 +11,17 @@ from rich.table import Table
 
 from .analyse import analyse_signal
 from .comments import load_comments_file
-from .discover import discover_with_ytdlp, instagram_reels_url
+from .discover import (
+    DAILY_WEB_QUERIES,
+    DAILY_REDDIT_QUERIES,
+    candidates_to_watch_items,
+    discover_from_source_seeds,
+    discover_with_ytdlp,
+    instagram_reels_url,
+    load_source_seeds,
+    search_duckduckgo,
+    search_reddit_pullpush,
+)
 from .models import AnalysedSignal, WatchItem
 from .notion_direct import load_run, sync_generated_scripts, sync_run_to_notion
 from .notion_export import export_notion_csv, write_notion_payload
@@ -18,7 +29,16 @@ from .report import write_outputs
 from .schedule import cron_hint, write_runner
 from .scrape import platform_from_url, probe_metadata, signal_from_metadata, transcribe
 from .scripts import generate_scripts as generate_scripts_from_items, write_generated_scripts
-from .storage import RUNS_DIR, ensure_dirs, load_patterns, load_watchlist, save_watchlist, upsert_patterns
+from .storage import (
+    DISCOVERY_DIR,
+    RUNS_DIR,
+    SOURCE_SEEDS_PATH,
+    ensure_dirs,
+    load_patterns,
+    load_watchlist,
+    save_watchlist,
+    upsert_patterns,
+)
 
 app = typer.Typer(help="Local-first content intelligence for social content signals.")
 console = Console()
@@ -97,6 +117,84 @@ def discover_account(
                 added += 1
         save_watchlist(items)
         console.print(f"[green]Added {added} new posts to watchlist.[/green]")
+
+
+@app.command("discover-daily")
+def discover_daily(
+    add: Annotated[bool, typer.Option(help="Add addable fresh candidates to the watchlist")] = False,
+    max_sources: Annotated[int | None, typer.Option(help="Limit seeded creator sources checked today")] = None,
+    max_per_source: Annotated[int, typer.Option(help="Fresh posts to keep from each seeded creator source")] = 2,
+    web_results: Annotated[int, typer.Option(help="Audience-pain web results to collect per query; use 0 to skip web search")] = 3,
+) -> None:
+    """Discover fresh daily candidates from seeded creators plus audience-pain web searches.
+
+    This is the robust discovery layer before scanning: it rotates through seeded
+    sources, skips previously scanned/watchlisted URLs, records web pain-language
+    candidates, and can add fresh video/social URLs to the watchlist.
+    """
+    ensure_dirs()
+    run_id = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+    seeds = load_source_seeds(SOURCE_SEEDS_PATH)
+    existing = {item.url for item in load_watchlist()} | previously_scanned_urls()
+    creator_candidates, errors = discover_from_source_seeds(
+        seeds,
+        existing_urls=set(existing),
+        max_sources=max_sources,
+        max_per_source=max_per_source,
+    )
+    web_candidates = []
+    if web_results > 0:
+        for subreddit, query, lane in DAILY_REDDIT_QUERIES:
+            try:
+                web_candidates.extend(search_reddit_pullpush(subreddit, query, lane, max_results=web_results))
+            except Exception as exc:
+                errors.append(f"reddit query failed: r/{subreddit} {query} — {exc}")
+        # DuckDuckGo HTML search is a fallback/additional broad web source. It can
+        # be sparse or bot-blocked, so failures here are non-fatal.
+        for query, lane in DAILY_WEB_QUERIES:
+            try:
+                results = search_duckduckgo(query, max_results=web_results)
+            except Exception as exc:
+                errors.append(f"web query failed: {query} — {exc}")
+                continue
+            for result in results:
+                web_candidates.append(result.__class__(**{**result.__dict__, "lane": lane}))
+
+    all_candidates = creator_candidates + web_candidates
+    report_path = DISCOVERY_DIR / f"{run_id}.json"
+    report_path.write_text(json.dumps([candidate.__dict__ for candidate in all_candidates], indent=2) + "\n")
+
+    added = 0
+    if add:
+        items = load_watchlist()
+        watch_existing = {item.url for item in items}
+        new_items = []
+        for item in candidates_to_watch_items(creator_candidates):
+            if item.url not in watch_existing:
+                new_items.append(item)
+                watch_existing.add(item.url)
+        if new_items:
+            save_watchlist([*items, *new_items])
+            added = len(new_items)
+
+    table = Table(title="Daily discovery candidates")
+    table.add_column("#")
+    table.add_column("Kind")
+    table.add_column("Creator/Source")
+    table.add_column("Lane")
+    table.add_column("Title")
+    table.add_column("URL")
+    for idx, candidate in enumerate(all_candidates[:40], 1):
+        kind = "scan" if candidate.addable else "pain"
+        table.add_row(str(idx), kind, candidate.creator or candidate.source[:30], candidate.lane[:28], candidate.title[:55], candidate.url[:75])
+    console.print(table)
+    console.print(f"[green]Discovery report:[/green] {report_path}")
+    if add:
+        console.print(f"[green]Added {added} fresh creator/social candidates to watchlist.[/green]")
+    if errors:
+        console.print("[yellow]Discovery caveats:[/yellow]")
+        for error in errors[:8]:
+            console.print(f"- {error}")
 
 
 @app.command("list")
